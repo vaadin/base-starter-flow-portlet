@@ -23,7 +23,9 @@
         <repository>
             <id>vaadin-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots</url>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -31,7 +33,9 @@
         <pluginRepository>
             <id>vaadin-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots</url>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 
@@ -99,7 +103,7 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>portlet</artifactId>
+            <artifactId>vaadin-portlet</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -173,6 +177,7 @@
 
             <properties>
                 <pluto.version>3.1.0</pluto.version>
+                <cargo.version>1.7.7</cargo.version>
                 <tomcat.version>8.0.53</tomcat.version>
             </properties>
 
@@ -181,6 +186,7 @@
                     <groupId>org.apache.portals.pluto</groupId>
                     <artifactId>pluto-portal</artifactId>
                     <version>${pluto.version}</version>
+                    <scope>provided</scope>
                     <type>war</type>
                 </dependency>
                 <dependency>
@@ -279,6 +285,13 @@
                     <version>1.7.5</version>
                     <scope>provided</scope>
                 </dependency>
+                <dependency>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>simple-war</artifactId>
+                    <version>${cargo.version}</version>
+                    <type>war</type>
+                    <scope>provided</scope>
+                </dependency>
             </dependencies>
 
             <build>
@@ -286,7 +299,7 @@
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>1.7.6</version>
+                        <version>${cargo.version}</version>
                         <configuration>
                             <container>
                                 <containerId>tomcat8x</containerId>
@@ -399,7 +412,18 @@
                                         -Xnoagent
                                         -Djava.compiler=NONE
                                     </cargo.start.jvmargs>
+                                    <cargo.tomcat.valve.rewrite>
+                                        className=org.apache.catalina.valves.rewrite.RewriteValve
+                                    </cargo.tomcat.valve.rewrite>
                                 </properties>
+                                <configfiles>
+                                    <configfile>
+                                        <file>
+                                            ${project.basedir}/rewrite.config
+                                        </file>
+                                        <todir>conf/Catalina/localhost</todir>
+                                    </configfile>
+                                </configfiles>
                             </configuration>
 
                             <deployables>
@@ -424,6 +448,16 @@
                                         <context>/pluto</context>
                                     </properties>
                                 </deployable>
+
+                                <deployable>
+                                    <groupId>org.codehaus.cargo</groupId>
+                                    <artifactId>simple-war</artifactId>
+                                    <type>war</type>
+                                    <properties>
+                                        <context>/</context>
+                                    </properties>
+                                </deployable>
+
                             </deployables>
                         </configuration>
                     </plugin>
