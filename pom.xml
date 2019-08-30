@@ -120,6 +120,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>com.vaadin</groupId>
@@ -130,6 +131,47 @@
                         <goals>
                             <goal>prepare-frontend</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Build 2 war files. one containing portlet and one containing all static files -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
+                <executions>
+                    <execution>
+                        <id>portlet-war</id>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <packagingExcludes>WEB-INF/classes/META-INF/VAADIN/build/**,VAADIN/</packagingExcludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>static-files</id>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <warName>vaadin-portlet-static</warName>
+                            <packagingIncludes>WEB-INF/lib/flow-client*.jar,VAADIN/</packagingIncludes>
+
+                            <webResources>
+                                <resource>
+                                    <!-- this is relative to the pom.xml directory -->
+                                    <directory>target/classes/META-INF/</directory>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>VAADIN/config/**</exclude>
+                                    </excludes>
+                                </resource>
+                            </webResources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -151,6 +193,12 @@
                     <artifactId>flow-server-production-mode</artifactId>
                     <version>${flow.version}</version>
                 </dependency>
+
+                <dependency>
+                    <groupId>javax.portlet</groupId>
+                    <artifactId>portlet-api</artifactId>
+                    <version>2.0</version>
+                </dependency>
             </dependencies>
 
             <build>
@@ -164,10 +212,10 @@
                                 <goals>
                                     <goal>build-frontend</goal>
                                 </goals>
-                                <phase>compile</phase>
                             </execution>
                         </executions>
                     </plugin>
+
                 </plugins>
             </build>
         </profile>
