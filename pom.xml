@@ -277,293 +277,52 @@
 
             <properties>
                 <pluto.version>3.1.0</pluto.version>
-                <cargo.version>1.7.7</cargo.version>
-                <tomcat.version>8.0.53</tomcat.version>
             </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-portal</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                    <type>war</type>
-                </dependency>
-                <dependency>
-                    <groupId>javax.portlet</groupId>
-                    <artifactId>portlet-api</artifactId>
-                    <version>3.0.1</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                    <version>2.4</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-container</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-container-api</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-container-driver-api</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-taglib</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-jsp-api</artifactId>
-                    <version>${tomcat.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-servlet-api</artifactId>
-                    <version>${tomcat.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.mvc</groupId>
-                    <artifactId>javax.mvc-api</artifactId>
-                    <version>1.0-pfd</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.ws.rs</groupId>
-                    <artifactId>javax.ws.rs-api</artifactId>
-                    <version>2.1.1</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>eu.infomas</groupId>
-                    <artifactId>annotation-detector</artifactId>
-                    <version>3.0.5</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                    <version>1.3.2</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.ccpp</groupId>
-                    <artifactId>ccpp</artifactId>
-                    <version>1.0</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld.servlet</groupId>
-                    <artifactId>weld-servlet</artifactId>
-                    <version>2.3.1.Final</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                    <version>1.7.5</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jdk14</artifactId>
-                    <version>1.7.5</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.codehaus.cargo</groupId>
-                    <artifactId>simple-war</artifactId>
-                    <version>${cargo.version}</version>
-                    <type>war</type>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
 
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>download-files</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <get src="ftp://ftp.funet.fi/pub/mirrors/apache.org/portals/pluto/pluto-bundle-${pluto.version}.zip"
+                                             dest="${project.build.directory}/pluto.zip"
+                                             verbose="false" usetimestamp="true"/>
+                                        <unzip
+                                                src="${project.build.directory}/pluto.zip"
+                                                dest="${project.build.directory}"/>
+                                        <copy file="${project.build.directory}/${project.artifactId}.war"
+                                              todir="${project.build.directory}/pluto-${pluto.version}/webapps"/>
+                                        <copy file="${project.build.directory}/vaadin-portlet-static.war"
+                                              todir="${project.build.directory}/pluto-${pluto.version}/webapps"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>${cargo.version}</version>
+                        <version>1.7.7</version>
                         <configuration>
                             <container>
                                 <containerId>tomcat8x</containerId>
-                                <artifactInstaller>
-                                    <groupId>org.apache.tomcat</groupId>
-                                    <artifactId>tomcat</artifactId>
-                                    <version>${tomcat.version}</version>
-                                </artifactInstaller>
-
-                                <!-- add below to Tomcat's shared libraries -->
-                                <dependencies>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-container</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-container-api
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-container-driver-api
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-taglib</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.portlet</groupId>
-                                        <artifactId>portlet-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.servlet</groupId>
-                                        <artifactId>servlet-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.slf4j</groupId>
-                                        <artifactId>slf4j-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.slf4j</groupId>
-                                        <artifactId>slf4j-jdk14</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>eu.infomas</groupId>
-                                        <artifactId>annotation-detector
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.annotation</groupId>
-                                        <artifactId>javax.annotation-api
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.jboss.weld.servlet
-                                        </groupId>
-                                        <artifactId>weld-servlet</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.mvc</groupId>
-                                        <artifactId>javax.mvc-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.ws.rs</groupId>
-                                        <artifactId>javax.ws.rs-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.ccpp</groupId>
-                                        <artifactId>ccpp</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                </dependencies>
                             </container>
-
                             <configuration>
-                                <type>standalone</type>
-                                <home>
-                                    ${project.build.directory}/apache-tomcat-${tomcat.version}
-                                </home>
-                                <properties>
-                                    <cargo.servlet.port>8080
-                                    </cargo.servlet.port>
-                                    <cargo.logging>medium</cargo.logging>
-                                    <cargo.servlet.users>
-                                        tomcat:tomcat:tomcat,pluto,manager-gui
-                                        | pluto:pluto:pluto,manager-gui,tckuser
-                                    </cargo.servlet.users>
-                                    <cargo.start.jvmargs>
-                                        -Xdebug
-                                        -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
-                                        -Xnoagent
-                                        -Djava.compiler=NONE
-                                    </cargo.start.jvmargs>
-                                    <cargo.tomcat.valve.rewrite>
-                                        className=org.apache.catalina.valves.rewrite.RewriteValve
-                                    </cargo.tomcat.valve.rewrite>
-                                </properties>
-                                <configfiles>
-                                    <configfile>
-                                        <file>
-                                            ${project.basedir}/rewrite.config
-                                        </file>
-                                        <todir>conf/Catalina/localhost</todir>
-                                    </configfile>
-                                </configfiles>
+                                <type>existing</type>
+                                <home>${project.build.directory}/pluto-${pluto.version}</home>
                             </configuration>
-
-                            <deployables>
-                                <!-- Deploy the portlet servlet under context /testsuite,
-                                 as Pluto portal by default includes testsuite.TestPortlet1 -->
-                                <deployable>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}
-                                    </artifactId>
-                                    <type>war</type>
-                                    <properties>
-                                        <context>/testsuite</context>
-                                    </properties>
-                                </deployable>
-
-                                <!-- Deploy Pluto portal under /pluto -->
-                                <deployable>
-                                    <groupId>org.apache.portals.pluto</groupId>
-                                    <artifactId>pluto-portal</artifactId>
-                                    <type>war</type>
-                                    <properties>
-                                        <context>/pluto</context>
-                                    </properties>
-                                </deployable>
-
-                                <deployable>
-                                    <groupId>org.codehaus.cargo</groupId>
-                                    <artifactId>simple-war</artifactId>
-                                    <type>war</type>
-                                    <properties>
-                                        <context>/</context>
-                                    </properties>
-                                </deployable>
-
-                            </deployables>
                         </configuration>
                     </plugin>
-
                 </plugins>
-
             </build>
         </profile>
 
