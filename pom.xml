@@ -17,9 +17,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.version>14.0-SNAPSHOT</vaadin.version>
         <flow.version>2.1.portal-SNAPSHOT</flow.version>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>vaadin-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots</url>
@@ -30,6 +38,13 @@
     </repositories>
 
     <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
         <pluginRepository>
             <id>vaadin-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots</url>
@@ -137,6 +152,43 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>servlet</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>javax.portlet</groupId>
+                    <artifactId>portlet-api</artifactId>
+                    <version>2.0</version>
+                </dependency>
+            </dependencies>
+            <build>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.0</version>
+                    </plugin>
+                    <!-- Jetty plugin for easy testing without a server -->
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>9.4.19.v20190610</version>
+                        <configuration>
+                            <!-- If using IntelliJ IDEA with autocompilation, this
+                            might cause lots of unnecessary compilations in the
+                            background.-->
+                            <scanIntervalSeconds>2</scanIntervalSeconds>
+                            <!-- Use war output directory to get the webpack files -->
+                            <webAppConfig>
+                                <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
+                            </webAppConfig>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <!-- Production mode is activated using -Pproduction -->
             <id>production</id>
