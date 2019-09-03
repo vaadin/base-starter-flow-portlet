@@ -9,7 +9,5 @@ public class MyPortlet extends VaadinPortlet {
 
     public static Logger logger = LoggerFactory.getLogger(MyPortlet.class);
 
-    public String getName() {
-        return "testsuite";
-    }
+    public static String PORTLET_TAG = "portlet-content";
 }

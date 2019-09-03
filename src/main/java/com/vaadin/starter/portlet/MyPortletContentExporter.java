@@ -10,7 +10,7 @@ public class MyPortletContentExporter
         extends WebComponentExporter<MyPortletContent> {
 
     public MyPortletContentExporter() {
-        super("portlet-content");
+        super(MyPortlet.PORTLET_TAG);
     }
 
     protected void configureInstance(WebComponent<MyPortletContent> webComp,
