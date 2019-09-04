@@ -11,7 +11,7 @@ We currently support Apache Pluto (https://portals.apache.org/pluto/). The
 easiest way to try out your application is to run a Maven goal which starts an 
 embedded Tomcat 8 serving the Pluto Portal driver:
 
-`mvn package cargo:run -P demo`
+`mvn package cargo:run -Pdemo,production`
 
 Visit http://localhost:8080/pluto, and log in as `pluto`, password `pluto`.
 The starter portlet (`TestPortlet1`) appears to the right of the "About" 
@@ -25,7 +25,7 @@ in IntelliJ, choose `Run -> Attach to Process...`).
 ## Integration tests
 To run the integration tests:
 
-`mvn clean verify -P demo,integration-tests` 
+`mvn clean verify -Pdemo,production,integration-tests` 
 
 ## Production build
 Before deploying your portlet for production for the first time, you will
@@ -34,7 +34,7 @@ something else, as well as the tag returned by `MyPortlet.PORTLET_TAG` from
 `portlet-content` to something else (stock Pluto already contains portlets with
 these names). Then build the production .war:
 
-`mvn -Pproduction package`
+`mvn package -Pproduction`
 
 After the build has finished, copy the files in `target/classes/META-INF/VAADIN/build/` 
 to Pluto tomcat ROOT folder e.g.` pluto-3.0.0/webapps/ROOT/VAADIN/build/`
