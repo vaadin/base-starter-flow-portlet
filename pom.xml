@@ -1,53 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.vaadin</groupId>
     <artifactId>portlet-starter</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+
     <name>Project base for Vaadin Portlet application</name>
 
+    <packaging>war</packaging>
+
     <properties>
+        <javax.validation.version>2.0.0.Final</javax.validation.version>
+
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <vaadin.productionMode>true</vaadin.productionMode>
+
         <vaadin.version>14.0-SNAPSHOT</vaadin.version>
         <flow.version>2.1.portal-SNAPSHOT</flow.version>
+        <portlet.version>1.0-SNAPSHOT</portlet.version>
+
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
     <repositories>
         <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>vaadin-prereleases</id>
+            <url>https://maven.vaadin.com/vaadin-prereleases/</url>
         </repository>
         <repository>
             <id>vaadin-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>vaadin-addons</id>
+            <url>https://maven.vaadin.com/vaadin-addons/</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>vaadin-prereleases</id>
+            <url>https://maven.vaadin.com/vaadin-prereleases/</url>
         </pluginRepository>
         <pluginRepository>
             <id>vaadin-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -99,6 +106,19 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-portlet</artifactId>
+            <version>${portlet.version}</version>
+        </dependency>
+
+        <!-- Test dependency from components -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>flow-data</artifactId>
+            <version>${flow.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-server</artifactId>
@@ -109,6 +129,7 @@
             <artifactId>flow-client</artifactId>
             <version>${flow.version}</version>
         </dependency>
+
         <!-- Added to provide logging output as Flow uses -->
         <!-- the unbound SLF4J no-operation (NOP) logger implementation -->
         <dependency>
@@ -116,17 +137,24 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.28</version>
         </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-portlet</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+
+        <!-- Portlet API -->
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
             <version>2.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench</artifactId>
@@ -135,7 +163,13 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+            </plugin>
             <plugin>
                 <groupId>com.vaadin</groupId>
                 <artifactId>flow-maven-plugin</artifactId>
@@ -148,60 +182,69 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>static-files</id>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <warName>vaadin-portlet-static</warName>
+                            <packagingIncludes>WEB-INF/lib/flow-client*.jar,VAADIN/</packagingIncludes>
+
+                            <webResources>
+                                <resource>
+                                    <!-- this is relative to the pom.xml directory -->
+                                    <directory>target/classes/META-INF/</directory>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>VAADIN/config/**</exclude>
+                                    </excludes>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </execution>
+                    <!-- The main war execution needs to be the last when using cargo in the
+                     same maven run as the package is built -->
+                    <execution>
+                        <id>portlet-war</id>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <primaryArtifact>true</primaryArtifact>
+                            <packagingExcludes>WEB-INF/classes/META-INF/VAADIN/build/**,VAADIN/</packagingExcludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
         </plugins>
     </build>
 
     <profiles>
         <profile>
-            <id>servlet</id>
-            <dependencies>
-
-                <dependency>
-                    <groupId>javax.portlet</groupId>
-                    <artifactId>portlet-api</artifactId>
-                    <version>2.0</version>
-                </dependency>
-            </dependencies>
-            <build>
-
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.0</version>
-                    </plugin>
-                    <!-- Jetty plugin for easy testing without a server -->
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>9.4.19.v20190610</version>
-                        <configuration>
-                            <!-- If using IntelliJ IDEA with autocompilation, this
-                            might cause lots of unnecessary compilations in the
-                            background.-->
-                            <scanIntervalSeconds>2</scanIntervalSeconds>
-                            <!-- Use war output directory to get the webpack files -->
-                            <webAppConfig>
-                                <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-                            </webAppConfig>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- Production mode is activated using -Pproduction -->
             <id>production</id>
-
-            <properties>
-                <vaadin.productionMode>true</vaadin.productionMode>
-            </properties>
 
             <dependencies>
                 <dependency>
                     <groupId>com.vaadin</groupId>
                     <artifactId>flow-server-production-mode</artifactId>
-                    <version>${flow.version}</version>
                 </dependency>
             </dependencies>
 
@@ -209,316 +252,80 @@
                 <plugins>
                     <plugin>
                         <groupId>com.vaadin</groupId>
-                        <version>${flow.version}</version>
                         <artifactId>flow-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>build-frontend</goal>
                                 </goals>
-                                <phase>compile</phase>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
-
         <profile>
             <id>demo</id>
 
             <properties>
                 <pluto.version>3.1.0</pluto.version>
-                <cargo.version>1.7.7</cargo.version>
-                <tomcat.version>8.0.53</tomcat.version>
             </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-portal</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                    <type>war</type>
-                </dependency>
-                <dependency>
-                    <groupId>javax.portlet</groupId>
-                    <artifactId>portlet-api</artifactId>
-                    <version>3.0.1</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                    <version>2.4</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-container</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-container-api</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-container-driver-api</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>pluto-taglib</artifactId>
-                    <version>${pluto.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-jsp-api</artifactId>
-                    <version>${tomcat.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-servlet-api</artifactId>
-                    <version>${tomcat.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.mvc</groupId>
-                    <artifactId>javax.mvc-api</artifactId>
-                    <version>1.0-pfd</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.ws.rs</groupId>
-                    <artifactId>javax.ws.rs-api</artifactId>
-                    <version>2.1.1</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>eu.infomas</groupId>
-                    <artifactId>annotation-detector</artifactId>
-                    <version>3.0.5</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                    <version>1.3.2</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.ccpp</groupId>
-                    <artifactId>ccpp</artifactId>
-                    <version>1.0</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld.servlet</groupId>
-                    <artifactId>weld-servlet</artifactId>
-                    <version>2.3.1.Final</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                    <version>1.7.5</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jdk14</artifactId>
-                    <version>1.7.5</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.codehaus.cargo</groupId>
-                    <artifactId>simple-war</artifactId>
-                    <version>${cargo.version}</version>
-                    <type>war</type>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
 
             <build>
                 <plugins>
+                    <!-- setup Pluto and copy portlet -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>download-files</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <get src="ftp://ftp.funet.fi/pub/mirrors/apache.org/portals/pluto/pluto-bundle-${pluto.version}.zip"
+                                             dest="${project.build.directory}/pluto.zip" verbose="false"
+                                             usetimestamp="true"/>
+                                        <unzip src="${project.build.directory}/pluto.zip"
+                                               dest="${project.build.directory}"/>
+                                        <copy file="${project.build.directory}/${project.artifactId}.war"
+                                              todir="${project.build.directory}/pluto-${pluto.version}/webapps"/>
+                                        <copy file="${project.build.directory}/vaadin-portlet-static.war"
+                                              todir="${project.build.directory}/pluto-${pluto.version}/webapps"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>${cargo.version}</version>
+                        <version>1.7.7</version>
                         <configuration>
                             <container>
                                 <containerId>tomcat8x</containerId>
-                                <artifactInstaller>
-                                    <groupId>org.apache.tomcat</groupId>
-                                    <artifactId>tomcat</artifactId>
-                                    <version>${tomcat.version}</version>
-                                </artifactInstaller>
-
-                                <!-- add below to Tomcat's shared libraries -->
-                                <dependencies>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-container</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-container-api
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-container-driver-api
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.apache.portals.pluto
-                                        </groupId>
-                                        <artifactId>pluto-taglib</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.portlet</groupId>
-                                        <artifactId>portlet-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.servlet</groupId>
-                                        <artifactId>servlet-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.slf4j</groupId>
-                                        <artifactId>slf4j-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.slf4j</groupId>
-                                        <artifactId>slf4j-jdk14</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>eu.infomas</groupId>
-                                        <artifactId>annotation-detector
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.annotation</groupId>
-                                        <artifactId>javax.annotation-api
-                                        </artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>org.jboss.weld.servlet
-                                        </groupId>
-                                        <artifactId>weld-servlet</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.mvc</groupId>
-                                        <artifactId>javax.mvc-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.ws.rs</groupId>
-                                        <artifactId>javax.ws.rs-api</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>javax.ccpp</groupId>
-                                        <artifactId>ccpp</artifactId>
-                                        <classpath>shared</classpath>
-                                    </dependency>
-                                </dependencies>
                             </container>
-
                             <configuration>
-                                <type>standalone</type>
-                                <home>
-                                    ${project.build.directory}/apache-tomcat-${tomcat.version}
-                                </home>
+                                <type>existing</type>
+                                <home>${project.build.directory}/pluto-${pluto.version}</home>
+
                                 <properties>
-                                    <cargo.servlet.port>8080
-                                    </cargo.servlet.port>
-                                    <cargo.logging>medium</cargo.logging>
-                                    <cargo.servlet.users>
-                                        tomcat:tomcat:tomcat,pluto,manager-gui
-                                        | pluto:pluto:pluto,manager-gui,tckuser
-                                    </cargo.servlet.users>
                                     <cargo.start.jvmargs>
                                         -Xdebug
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
                                         -Xnoagent
                                         -Djava.compiler=NONE
                                     </cargo.start.jvmargs>
-                                    <cargo.tomcat.valve.rewrite>
-                                        className=org.apache.catalina.valves.rewrite.RewriteValve
-                                    </cargo.tomcat.valve.rewrite>
                                 </properties>
-                                <configfiles>
-                                    <configfile>
-                                        <file>
-                                            ${project.basedir}/rewrite.config
-                                        </file>
-                                        <todir>conf/Catalina/localhost</todir>
-                                    </configfile>
-                                </configfiles>
                             </configuration>
-
-                            <deployables>
-                                <!-- Deploy the portlet servlet under context /testsuite,
-                                 as Pluto portal by default includes testsuite.TestPortlet1 -->
-                                <deployable>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}
-                                    </artifactId>
-                                    <type>war</type>
-                                    <properties>
-                                        <context>/testsuite</context>
-                                    </properties>
-                                </deployable>
-
-                                <!-- Deploy Pluto portal under /pluto -->
-                                <deployable>
-                                    <groupId>org.apache.portals.pluto</groupId>
-                                    <artifactId>pluto-portal</artifactId>
-                                    <type>war</type>
-                                    <properties>
-                                        <context>/pluto</context>
-                                    </properties>
-                                </deployable>
-
-                                <deployable>
-                                    <groupId>org.codehaus.cargo</groupId>
-                                    <artifactId>simple-war</artifactId>
-                                    <type>war</type>
-                                    <properties>
-                                        <context>/</context>
-                                    </properties>
-                                </deployable>
-
-                            </deployables>
                         </configuration>
                     </plugin>
-
                 </plugins>
-
             </build>
         </profile>
-
         <profile>
             <id>integration-tests</id>
 
@@ -607,5 +414,43 @@
             </build>
         </profile>
 
+        <profile>
+            <id>servlet</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>javax.portlet</groupId>
+                    <artifactId>portlet-api</artifactId>
+                    <version>2.0</version>
+                </dependency>
+            </dependencies>
+            <build>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.0</version>
+                    </plugin>
+                    <!-- Jetty plugin for easy testing without a server -->
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>9.4.19.v20190610</version>
+                        <configuration>
+                            <!-- If using IntelliJ IDEA with autocompilation, this
+                            might cause lots of unnecessary compilations in the
+                            background.-->
+                            <scanIntervalSeconds>2</scanIntervalSeconds>
+                            <!-- Use war output directory to get the webpack files -->
+                            <webAppConfig>
+                                <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
+                            </webAppConfig>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
+
 </project>
