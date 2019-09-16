@@ -44,15 +44,10 @@ these names). Then build the production .war:
 
 `mvn package -Pproduction`
 
-After the build has finished, copy the files in `target/classes/META-INF/VAADIN/build/` 
-into Pluto tomcat ROOT folder e.g.` pluto-3.0.0/webapps/ROOT/VAADIN/build/`
-
-Next you need to unzip `flow-client-2.1.portal-SNAPSHOT.jar` from `target/[war_name]/WEB-INF/lib/` 
-and copy the files in `META-INF/VAADIN/static/client` into tomcat ROOT e.g. `pluto-3.0.0/webapps/ROOT/VAADIN/static/client`.
-
-Copy both .war files from the `target` directory into Pluto's `webapps` 
-directory and restart Pluto. To add the portlet to a page, use Pluto's 
-"Pluto Admin" interface as detailed in "Running the portlet".
+Copy both `portlet-starter.war` and `vaadin-portlet-static.war` from `/target`
+folder into the `webapps` folder on a TomCat web server with Pluto. Restart
+the web server. To add the portlet to a page, use Pluto's "Pluto Admin" 
+interface as detailed in "Running the portlet".
 
 ## Portlet development in servlet mode
 
@@ -75,7 +70,7 @@ public class ServletDevelopment extends MyPortletContent {
 
 Then run the project as `mvn clean jetty:run -Pservlet`
 
-## Creating a Portlet with servlet mode
+### Creating a Portlet with servlet mode
 
 To create an application that can be used both as a portlet and a servlet application
 you need to check at generation time the `Request` type.
