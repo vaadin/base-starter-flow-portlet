@@ -103,3 +103,10 @@ public class MyPortletContent extends VerticalLayout {
     }
 }
 ```
+
+## Notes about the project
+
+Vaadin 14+ portlet support feature is still under development and changes to
+both the API and this starter project are possible. For example, 
+`MyComponentContentExporter` is currently a workaround and the requirement
+for implementing a `WebComponentExporter` should fade away in the future.
