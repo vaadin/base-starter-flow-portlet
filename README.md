@@ -14,8 +14,16 @@ embedded Tomcat 8 serving the Pluto Portal driver:
 `mvn package cargo:run -Pdemo,production`
 
 Visit http://localhost:8080/pluto, and log in as `pluto`, password `pluto`.
-The starter portlet (`TestPortlet1`) appears to the right of the "About" 
-portlet. 
+
+The deployed portlet needs to be added to portal page. Do this by
+1) Selecting `Pluto Admin` page
+2) Select `About Apache Pluto` from the drop-down under "Portal Pages"
+3) Select `/portlet-starter` from the left drop-down under "Portlet Applications"
+4) Select `MyPortlet1` from the drop-down on the right
+5) Click the `Add Portlet` button
+
+Once you navigate to `About Apache Pluto` page, the starter portlet should be
+visible on the page, displaying a "Click me" button. 
 
 ## Remote debugging for Portal
 
@@ -36,15 +44,10 @@ these names). Then build the production .war:
 
 `mvn package -Pproduction`
 
-After the build has finished, copy the files in `target/classes/META-INF/VAADIN/build/` 
-to Pluto tomcat ROOT folder e.g.` pluto-3.0.0/webapps/ROOT/VAADIN/build/`
-
-Next you need to unzip `flow-client.jar` from `target/[war_name]/lib/flow-client-2.1.portal-SNAPSHOT.jar` 
-and copy the files in `VAADIN/static/client` to tomcat ROOT e.g. `pluto-3.0.0/webapps/ROOT/VAADIN/static/client`.
-
-Copy the .war generated in the `target` directory to Pluto's `webapps` 
-directory and restart Pluto. To add the portlet to a page, use Pluto's 
-"Pluto Admin" interface.
+Copy both `portlet-starter.war` and `vaadin-portlet-static.war` from `/target`
+folder into the `webapps` folder on a TomCat web server with Pluto. Restart
+the web server. To add the portlet to a page, use Pluto's "Pluto Admin" 
+interface as detailed in "Running the portlet".
 
 ## Portlet development in servlet mode
 
@@ -67,12 +70,12 @@ public class ServletDevelopment extends MyPortletContent {
 
 Then run the project as `mvn clean jetty:run -Pservlet`
 
-## Creating a Portlet with servlet mode
+### Creating a Portlet with servlet mode
 
 To create an application that can be used both as a portlet and a servlet application
-you need to check at generation time the Request type.
+you need to check at generation time the `Request` type.
 
-For instance MyPortletContent could be setup as
+For instance `MyPortletContent` could be setup as
 
 ```java
 public class MyPortletContent extends VerticalLayout {
@@ -95,3 +98,10 @@ public class MyPortletContent extends VerticalLayout {
     }
 }
 ```
+
+## Notes about the project
+
+Vaadin 14+ portlet support feature is still under development and changes to
+both the API and this starter project are possible. For example, 
+`MyComponentContentExporter` is currently a workaround and the requirement
+for implementing a `WebComponentExporter` should fade away in the future.
