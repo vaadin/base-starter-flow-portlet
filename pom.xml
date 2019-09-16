@@ -20,6 +20,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <vaadin.productionMode>true</vaadin.productionMode>
+
         <vaadin.version>14.0-SNAPSHOT</vaadin.version>
         <flow.version>2.1.portal-SNAPSHOT</flow.version>
         <portlet.version>1.0-SNAPSHOT</portlet.version>
