@@ -23,7 +23,7 @@
         <vaadin.productionMode>true</vaadin.productionMode>
 
         <vaadin.version>14.0-SNAPSHOT</vaadin.version>
-        <flow.version>2.1.portal-SNAPSHOT</flow.version>
+        <flow.version>2.2-SNAPSHOT</flow.version>
         <portlet.version>1.0-SNAPSHOT</portlet.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
