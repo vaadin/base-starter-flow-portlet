@@ -45,7 +45,7 @@ these names). Then build the production .war:
 `mvn package -Pproduction`
 
 Copy both `portlet-starter.war` and `vaadin-portlet-static.war` from `/target`
-folder into the `webapps` folder on a TomCat web server with Pluto. Restart
+folder into the `webapps` folder on a Tomcat web server with Pluto. Restart
 the web server. To add the portlet to a page, use Pluto's "Pluto Admin" 
 interface as detailed in "Running the portlet".
 
@@ -102,6 +102,4 @@ public class MyPortletContent extends VerticalLayout {
 ## Notes about the project
 
 Vaadin 14+ portlet support feature is still under development and changes to
-both the API and this starter project are possible. For example, 
-`MyComponentContentExporter` is currently a workaround and the requirement
-for implementing a `WebComponentExporter` should fade away in the future.
+both the API and this starter project are possible.
