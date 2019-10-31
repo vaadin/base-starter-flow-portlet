@@ -5,6 +5,8 @@ with Pluto Portal 3.1.0.
 Clone the repository and import the project to the IDE of your choice as a Maven
 project. You need to have Java 8 or 11 installed.
 
+The documentation for Vaadin Portlet support is available [here](https://github.com/vaadin/flow-and-components-documentation/blob/master/documentation/portlet-support/overview.asciidoc).
+
 ## Running the portlet
 
 Before the portlet application can be run, it must be deployed to a portal. 
