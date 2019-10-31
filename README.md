@@ -12,7 +12,8 @@ The documentation for Vaadin Portlet support is available [here](https://github.
 Before the portlet application can be run, it must be deployed to a portal. 
 We currently support Apache Pluto (https://portals.apache.org/pluto/). The
 easiest way to try out your application is to run a Maven goal which starts an 
-embedded Tomcat 8 serving the Pluto Portal driver:
+embedded Tomcat 8 serving the Pluto Portal driver (for Java 10 or newer JDKs,
+also add the `demo-java10` profile):
 
 `mvn package cargo:run -Pdemo,production`
 
