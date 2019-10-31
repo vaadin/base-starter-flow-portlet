@@ -22,9 +22,9 @@
 
         <vaadin.productionMode>true</vaadin.productionMode>
 
-        <vaadin.version>14.0-SNAPSHOT</vaadin.version>
-        <flow.version>2.2-SNAPSHOT</flow.version>
-        <portlet.version>1.0-SNAPSHOT</portlet.version>
+        <vaadin.version>14.1.0.alpha4</vaadin.version>
+        <flow.version>2.2.0.alpha2</flow.version>
+        <vaadin-portlet.version>1.0.0.alpha2</vaadin-portlet.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
@@ -110,7 +110,7 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-portlet</artifactId>
-            <version>${portlet.version}</version>
+            <version>${vaadin-portlet.version}</version>
         </dependency>
 
         <!-- Test dependency from components -->
@@ -172,6 +172,7 @@
             </plugin>
             <plugin>
                 <groupId>com.vaadin</groupId>
+                <!-- Using Flow plugin instead of Vaadin plugin due to lacking prerelease of Vaadin 14.2 -->
                 <artifactId>flow-maven-plugin</artifactId>
                 <version>${flow.version}</version>
                 <executions>
@@ -252,6 +253,7 @@
                 <plugins>
                     <plugin>
                         <groupId>com.vaadin</groupId>
+                        <!-- Using Flow plugin instead of Vaadin plugin due to lacking prerelease of Vaadin 14.2 -->
                         <artifactId>flow-maven-plugin</artifactId>
                         <executions>
                             <execution>
