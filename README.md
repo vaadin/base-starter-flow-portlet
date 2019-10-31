@@ -1,6 +1,7 @@
 # Vaadin Portlet Starter Project
 Project to get started with a Vaadin application that is running inside a 
-portlet in a portal, as defined in the JSR-286 (Java Portlet API 2.0) standard.
+portlet in a portal based on the Java Portlet API 3.0. The starter has been tested
+with Pluto Portal 3.1.0.
 Clone the repository and import the project to the IDE of your choice as a Maven
 project. You need to have Java 8 or 11 installed.
 
