@@ -179,6 +179,9 @@
                     <execution>
                         <goals>
                             <goal>prepare-frontend</goal>
+                            <!-- If you want to run a servlet in development mode, you don't need this target then.
+                                But it is required to be able to deploy the portlet to pluto. -->
+                            <goal>build-frontend</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -248,23 +251,6 @@
                     <artifactId>flow-server-production-mode</artifactId>
                 </dependency>
             </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <!-- Using Flow plugin instead of Vaadin plugin due to lacking prerelease of Vaadin 14.2 -->
-                        <artifactId>flow-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>build-frontend</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>demo</id>
@@ -419,15 +405,16 @@
         <profile>
             <id>servlet</id>
             <dependencies>
-
+                <!-- Need the dependency since the Portal does not bring it-->
                 <dependency>
                     <groupId>javax.portlet</groupId>
                     <artifactId>portlet-api</artifactId>
-                    <version>2.0</version>
+                    <version>3.0.0</version>
                 </dependency>
             </dependencies>
             <build>
-
+                <!-- If you want to run webpack dev server instead of prebuilt frontend bunde,
+                    you need to (re)move the <goal>build-frontend</goal> from the default profile. -->
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

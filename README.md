@@ -7,6 +7,10 @@ project. You need to have Java 8 or 11 installed.
 
 The documentation for Vaadin Portlet support is available [here](https://github.com/vaadin/flow-and-components-documentation/blob/master/documentation/portlet-support/overview.asciidoc).
 
+[NOTE] Vaadin Portlet support requires Vaadin Prime subscription. The portlet will
+not work unless you have a valid license in your system. When logging into vaadin.com
+to save the license in your system, you need to restart the portal for now due to a bug.
+
 ## Running the portlet
 
 Before the portlet application can be run, it must be deployed to a portal. 
@@ -14,7 +18,7 @@ We currently support Apache Pluto (https://portals.apache.org/pluto/). The
 easiest way to try out your application is to run a Maven goal which starts an 
 embedded Tomcat 8 serving the Pluto Portal driver:
 
-`mvn package cargo:run -Pdemo,production`
+`mvn package cargo:run -Pdemo`
 
 Visit http://localhost:8080/pluto, and log in as `pluto`, password `pluto`.
 
