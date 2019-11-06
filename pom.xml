@@ -195,7 +195,9 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+                <!-- Generate 2 war archives for portlet. One for the portlet and another for the static files -->
                 <executions>
+                    <!-- Generate a static war 'vaadin-portlet-static.war' with all static files -->
                     <execution>
                         <id>static-files</id>
                         <goals>
@@ -203,15 +205,18 @@
                         </goals>
                         <configuration>
                             <warName>vaadin-portlet-static</warName>
+                            <!-- static files should contain flow-client and all build files generated in VAADIN/ -->
                             <packagingIncludes>WEB-INF/lib/flow-client*.jar,VAADIN/</packagingIncludes>
 
                             <webResources>
                                 <resource>
                                     <!-- this is relative to the pom.xml directory -->
                                     <directory>target/classes/META-INF/</directory>
+                                    <!-- Include all files and folders below <directory> -->
                                     <includes>
                                         <include>**</include>
                                     </includes>
+                                    <!-- do not include configuration files -->
                                     <excludes>
                                         <exclude>VAADIN/config/**</exclude>
                                     </excludes>
@@ -219,8 +224,7 @@
                             </webResources>
                         </configuration>
                     </execution>
-                    <!-- The main war execution needs to be the last when using cargo in the
-                     same maven run as the package is built -->
+                    <!-- Generate the portlet war excluding any static build files -->
                     <execution>
                         <id>portlet-war</id>
                         <goals>
@@ -323,6 +327,10 @@
                                     </cargo.start.jvmargs>
                                 </properties>
                             </configuration>
+                            <!-- Set an empty deployer so that cargo does not try to add the
+                            current project's artifact to the container (as this was already
+                            done by maven) -->
+                            <deployer />
                         </configuration>
                     </plugin>
                 </plugins>
