@@ -179,10 +179,7 @@
                     <execution>
                         <goals>
                             <goal>prepare-frontend</goal>
-                            <!--
-                                We need to build-frontend file to make asset
-                                bundling work in portlet environment
-                             -->
+                            <!-- We need build-frontend goal to make asset bundling work in portlet environment -->
                             <goal>build-frontend</goal>
                         </goals>
                     </execution>
