@@ -179,6 +179,8 @@
                     <execution>
                         <goals>
                             <goal>prepare-frontend</goal>
+                            <!-- We need build-frontend goal to make asset bundling work in portlet environment -->
+                            <goal>build-frontend</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -252,24 +254,8 @@
                     <artifactId>flow-server-production-mode</artifactId>
                 </dependency>
             </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <!-- Using Flow plugin instead of Vaadin plugin due to lacking prerelease of Vaadin 14.2 -->
-                        <artifactId>flow-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>build-frontend</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
+
         <profile>
             <id>demo</id>
 

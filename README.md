@@ -14,7 +14,7 @@ We currently support Apache Pluto (https://portals.apache.org/pluto/). The
 easiest way to try out your application is to run a Maven goal which starts an 
 embedded Tomcat 8 serving the Pluto Portal driver:
 
-`mvn package cargo:run -Pdemo,production`
+`mvn package cargo:run -Pdemo`
 
 Visit http://localhost:8080/pluto, and log in as `pluto`, password `pluto`.
 
@@ -36,7 +36,7 @@ in IntelliJ, choose `Run -> Attach to Process...`).
 ## Integration tests
 To run the integration tests:
 
-`mvn clean verify -Pdemo,production,integration-tests` 
+`mvn clean verify -Pdemo,integration-tests` 
 
 ## Production build
 Before deploying your portlet for production for the first time, you will
@@ -56,7 +56,8 @@ interface as detailed in "Running the portlet".
 
 It is possible to develop portlets as normal single route Vaadin applications.
 
-[NOTE] when developing using servlet mode no Portlet specific methods can be used
+**Note:**
+When developing using servlet mode no Portlet specific methods can be used
 in the view for servlet mode. 
 
 To develop portlets in servlet mode using jetty create a Route for portlet content e.g.
