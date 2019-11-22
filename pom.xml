@@ -22,7 +22,7 @@
 
         <vaadin.version>14.1.0.beta3</vaadin.version>
         <flow.version>2.2.0.alpha5</flow.version>
-        <vaadin-portlet.version>1.0.0.alpha4</vaadin-portlet.version>
+        <vaadin-portlet.version>1.0.0.alpha5</vaadin-portlet.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
