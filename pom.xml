@@ -21,8 +21,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <vaadin.version>14.1.0.beta3</vaadin.version>
-        <flow.version>2.2.0.alpha5</flow.version>
-        <vaadin-portlet.version>1.0.0.alpha5</vaadin-portlet.version>
+        <flow.version>2.2.0.alpha6</flow.version>
+        <vaadin-portlet.version>1.0.0.beta1</vaadin-portlet.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
