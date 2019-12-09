@@ -20,8 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <vaadin.version>14.1.0.beta3</vaadin.version>
-        <flow.version>2.2.0.alpha6</flow.version>
+        <vaadin.version>14.2.0.alpha1</vaadin.version>
         <vaadin-portlet.version>1.0.0.beta1</vaadin-portlet.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -111,23 +110,6 @@
             <version>${vaadin-portlet.version}</version>
         </dependency>
 
-        <!-- Test dependency from components -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-data</artifactId>
-            <version>${flow.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-server</artifactId>
-            <version>${flow.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>flow-client</artifactId>
-            <version>${flow.version}</version>
-        </dependency>
-
         <!-- Added to provide logging output as Flow uses -->
         <!-- the unbound SLF4J no-operation (NOP) logger implementation -->
         <dependency>
@@ -170,9 +152,8 @@
             </plugin>
             <plugin>
                 <groupId>com.vaadin</groupId>
-                <!-- Using Flow plugin instead of Vaadin plugin due to lacking prerelease of Vaadin 14.2 -->
-                <artifactId>flow-maven-plugin</artifactId>
-                <version>${flow.version}</version>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>${vaadin.version}</version>
                 <executions>
                     <execution>
                         <goals>
