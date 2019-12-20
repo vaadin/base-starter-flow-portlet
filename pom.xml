@@ -21,7 +21,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <vaadin.version>14.2.0.alpha1</vaadin.version>
-        <vaadin-portlet.version>1.0.0.beta1</vaadin-portlet.version>
+        <vaadin-portlet.version>1.0.0.beta2</vaadin-portlet.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
