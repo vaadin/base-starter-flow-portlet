@@ -1,11 +1,12 @@
 # Vaadin Portlet Starter Project
 Project to get started with a Vaadin application that is running inside a 
 portlet in a portal based on the Java Portlet API 3.0. The starter has been tested
-with Pluto Portal 3.1.0.
+with Pluto Portal 3.1.0. 
+Use `liferay` branch to run this starter in Liferay 7 Portal. 
 Clone the repository and import the project to the IDE of your choice as a Maven
 project. You need to have Java 8 or 11 installed.
 
-The documentation for Vaadin Portlet support is available [here](https://github.com/vaadin/flow-and-components-documentation/blob/master/documentation/portlet-support/overview.asciidoc).
+The documentation for Vaadin Portlet support is available [here](https://vaadin.com/docs/v14/flow/integrations/portlet).
 
 ## Running the portlet
 
@@ -102,8 +103,3 @@ public class MyPortletContent extends VerticalLayout {
     }
 }
 ```
-
-## Notes about the project
-
-Vaadin 14+ portlet support feature is still under development and changes to
-both the API and this starter project are possible.
