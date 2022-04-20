@@ -29,5 +29,14 @@
         <security-role-ref>
             <role-name>user</role-name>
         </security-role-ref>
+        <container-runtime-option>
+            <name>javax.portlet.renderHeaders</name>
+            <value>true</value>
+        </container-runtime-option>
+        <dependency>
+            <name>PortletHub</name>
+            <scope>javax.portlet</scope>
+            <version>3.0.0</version>
+        </dependency>
     </portlet>
 </portlet-app>

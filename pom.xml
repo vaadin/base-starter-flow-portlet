@@ -20,8 +20,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <vaadin.version>14.8.1</vaadin.version>
-        <vaadin-portlet.version>1.0.0.beta4</vaadin-portlet.version>
+        <vaadin.version>14.8.8</vaadin.version>
+        <vaadin-portlet.version>1.0.0</vaadin-portlet.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
@@ -187,7 +187,7 @@
                         <configuration>
                             <warName>vaadin-portlet-static</warName>
                             <!-- static files should contain flow-client and all build files generated in VAADIN/ -->
-                            <packagingIncludes>WEB-INF/lib/flow-client*.jar,VAADIN/</packagingIncludes>
+                            <packagingIncludes>WEB-INF/lib/flow-client*.jar,WEB-INF/lib/vaadin-portlet*.jar,VAADIN/</packagingIncludes>
 
                             <webResources>
                                 <resource>
