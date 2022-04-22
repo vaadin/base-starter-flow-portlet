@@ -1,8 +1,10 @@
 # Vaadin Portlet Starter Project
-Project to get started with a Vaadin application that is running inside a 
-portlet in a Liferay 7 Portal.
-Clone the repository and import the project to the IDE of your choice as a Maven
-project. You need to have Java 8 or 11 installed.
+Project to get started with a Vaadin application that is running inside a portlet in a Liferay 7 Portal.
+
+**Prime** Vaadin subscription is required for this starter project and for all the applications using Vaadin Portlet.
+You also need to have Java 8 or 11 installed.
+
+Clone the repository and import the project to the IDE of your choice as a Maven project.
 
 The documentation for Vaadin Portlet support is available [here](https://vaadin.com/docs/v14/flow/integrations/portlet).
 
