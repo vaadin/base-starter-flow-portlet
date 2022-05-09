@@ -15,13 +15,12 @@
     <properties>
         <javax.validation.version>2.0.0.Final</javax.validation.version>
 
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <vaadin.version>14.8.9</vaadin.version>
-        <vaadin-portlet.version>1.0.0</vaadin-portlet.version>
+        <vaadin.version>23.1.0.beta1</vaadin.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
@@ -75,39 +74,11 @@
             <groupId>com.vaadin</groupId>
             <!-- Replace artifactId with vaadin-core to use only free components -->
             <artifactId>vaadin</artifactId>
-            <exclusions>
-                <!-- Webjars are only needed when running in Vaadin 13 compatibility mode -->
-                <exclusion>
-                    <groupId>com.vaadin.webjar</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.insites</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.polymer</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.polymerelements</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.vaadin</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.webcomponents</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-portlet</artifactId>
-            <version>${vaadin-portlet.version}</version>
         </dependency>
 
         <!-- Added to provide logging output as Flow uses -->
@@ -192,7 +163,7 @@
                             <webResources>
                                 <resource>
                                     <!-- this is relative to the pom.xml directory -->
-                                    <directory>target/classes/META-INF/</directory>
+                                    <directory>target/classes/META-INF/VAADIN/webapp/</directory>
                                     <!-- Include all files and folders below <directory> -->
                                     <includes>
                                         <include>**</include>
