@@ -2,13 +2,22 @@
 Project to get started with a Vaadin 23.1+ application that is running inside a portlet in a Liferay 7 Portal.
 
 **Prime** Vaadin subscription is required for this starter project and for all the applications using Vaadin Portlet.
-You also need to have Java 8 or 11 installed.
+You also need to have Java 11 (or later) installed.
 
 Clone the repository and import the project to the IDE of your choice as a Maven project.
 
 The documentation for Vaadin Portlet support is available [here](https://vaadin.com/docs/latest/flow/integrations/portlet).
 
-## Running the portlet under Liferay
+## Project demo
+Run the following profile to automatically download and set up the Liferay bundle:
+
+`mvn clean package -Pdemo`
+
+Start the Liferay with your portlet:
+
+`mvn cargo:run`
+
+## Set up Liferay manually and running the portlet
 
 Before the portlet application can be run, it must be deployed to a [Liferay](https://www.liferay.com/downloads-community):
 
@@ -32,6 +41,9 @@ services:
             - ./deploy:/mnt/liferay/deploy
             - ./files:/mnt/liferay/files
 ````
+
+   The following steps describe how to set up the Liferay regardless of what way 
+of Liferay distribution you choose: bundle or Docker image. 
 
 3. Add the following to the end of the last line in Tomcat's `setenv.sh`
    (`/var/liferay/tomcat-<version>/bin`) before starting Liferay. When
@@ -57,8 +69,7 @@ services:
 
 5. Run `docker-compose up`
 
-6. Deploy all wars: `addressbook-grid/target/address-book-grid.war`,
-   `addressbook-form/target/address-book-form.war` and `addressbook-bundle/target/vaadin-portlet-static.war`,
+6. Deploy all wars: `vaadin-portlet-static.war` and `portlet-starter.war`
    to your docker container by copying them to `./deploy/` (the copied files should disappear when deployed).
 
 7. Wait for the bundles to start, then visit http://localhost:8080/.
@@ -87,11 +98,6 @@ above docker-compose file place an edited copy of `setenv.sh` in `./files/tomcat
 
 Remote debugging (JDWP) is now available on port 8000 (to activate
 in IntelliJ, choose `Run -> Attach to Process...`).
-
-## Integration tests
-To run the integration tests:
-
-`mvn clean verify -Pdemo,integration-tests` 
 
 ## Production build
 Before deploying your portlet for production for the first time, you will

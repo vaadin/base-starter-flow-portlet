@@ -13,6 +13,19 @@
     <packaging>war</packaging>
 
     <properties>
+        <liferay.version>7.4.3.5-ga5</liferay.version>
+        <tomcat.version>9.0.56</tomcat.version>
+        <liferay.home.directory>
+            ${project.build.directory}/liferay-ce-portal-${liferay.version}
+        </liferay.home.directory>
+        <tomcat.home.directory>
+            ${liferay.home.directory}/tomcat-${tomcat.version}
+        </tomcat.home.directory>
+        <bundle.download.directory>${project.build.directory}
+        </bundle.download.directory>
+        <cargo.debug.port>5005</cargo.debug.port>
+        <cargo.timeout>120000</cargo.timeout>
+
         <javax.validation.version>2.0.0.Final</javax.validation.version>
 
         <maven.compiler.source>11</maven.compiler.source>
@@ -189,7 +202,48 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven3-plugin</artifactId>
+                <version>1.9.10</version>
+                <configuration>
+                    <container>
+                        <containerId>tomcat9x</containerId>
+                        <home>${tomcat.home.directory}</home>
+                        <timeout>${cargo.timeout}</timeout>
+                    </container>
+                    <configuration>
+                        <type>existing</type>
+                        <home>${tomcat.home.directory}</home>
+                        <properties>
+                            <cargo.start.jvmargs>
+                                -Xdebug
+                                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${cargo.debug.port}
+                                -Xnoagent
+                                -Dfile.encoding=UTF-8
+                                -Djava.locale.providers=JRE,COMPAT,CLDR
+                                -Djava.net.preferIPv4Stack=true
+                                -Duser.timezone=GMT
+                                -Xms2560m
+                                -Xmx2560m
+                                -XX:MaxNewSize=1536m
+                                -XX:MaxMetaspaceSize=768m
+                                -XX:MetaspaceSize=768m
+                                -XX:NewSize=1536m
+                                -XX:SurvivorRatio=7
+                                -Djava.compiler=NONE
+                                -Dvaadin.heartbeatInterval=15
+                                -Dvaadin.portlet.static.resources.mapping=/o/vaadin-portlet-static/
+                            </cargo.start.jvmargs>
+                        </properties>
+                    </configuration>
 
+                    <!-- Set an empty deployer so that cargo does not try to add the
+                    current project's artifact to the container (as this was already
+                    done by maven) -->
+                    <deployer/>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>
@@ -209,16 +263,13 @@
         <profile>
             <id>demo</id>
 
-            <properties>
-                <pluto.version>3.1.0</pluto.version>
-            </properties>
-
             <build>
                 <plugins>
-                    <!-- setup Pluto and copy portlet -->
+                    <!-- setup Liferay and copy portlet -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.0.0</version>
                         <executions>
                             <execution>
                                 <id>download-files</id>
@@ -227,204 +278,60 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <tasks>
-                                        <get src="ftp://ftp.funet.fi/pub/mirrors/apache.org/portals/pluto/pluto-bundle-${pluto.version}.zip"
-                                             dest="${project.build.directory}/pluto.zip" verbose="false"
+                                    <target name="setup-liferay">
+                                        <get src="https://github.com/liferay/liferay-portal/releases/download/${liferay.version}/liferay-ce-portal-tomcat-${liferay.version}-20211221192828235.tar.gz"
+                                             dest="${bundle.download.directory}/liferay.tar.gz"
+                                             verbose="false"
                                              usetimestamp="true"/>
-                                        <unzip src="${project.build.directory}/pluto.zip"
+                                        <untar src="${bundle.download.directory}/liferay.tar.gz"
+                                               compression="gzip"
                                                dest="${project.build.directory}"/>
                                         <copy file="${project.build.directory}/${project.artifactId}.war"
-                                              todir="${project.build.directory}/pluto-${pluto.version}/webapps"/>
+                                              todir="${liferay.home.directory}/osgi/war"/>
                                         <copy file="${project.build.directory}/vaadin-portlet-static.war"
-                                              todir="${project.build.directory}/pluto-${pluto.version}/webapps"/>
-                                    </tasks>
+                                              todir="${liferay.home.directory}/osgi/war"/>
+                                        <copy file="${project.basedir}/src/main/liferay/jna-5.11.0.jar"
+                                              todir="${tomcat.home.directory}/webapps/ROOT/WEB-INF/shielded-container-lib/"/>
+                                        <copy file="${project.basedir}/src/main/liferay/jna-platform-5.11.0.jar"
+                                              todir="${tomcat.home.directory}/webapps/ROOT/WEB-INF/shielded-container-lib/"/>
+                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.cargo</groupId>
-                        <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>1.7.7</version>
-                        <configuration>
-                            <container>
-                                <containerId>tomcat8x</containerId>
-                                <zipUrlInstaller>
-                                    <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.50/tomcat-8.5.50.zip</url>
-                                </zipUrlInstaller>
-                            </container>
-                            <configuration>
-                                <type>existing</type>
-                                <home>${project.build.directory}/pluto-${pluto.version}</home>
-
-                                <properties>
-                                    <cargo.start.jvmargs>
-                                        -Xdebug
-                                        -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
-                                        -Xnoagent
-                                        -Djava.compiler=NONE
-                                    </cargo.start.jvmargs>
-                                </properties>
-                            </configuration>
-                            <!-- Set an empty deployer so that cargo does not try to add the
-                            current project's artifact to the container (as this was already
-                            done by maven) -->
-                            <deployer />
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>java11</id>
-            <activation>
-              <jdk>[11,)</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                    <version>2.2.11</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-core</artifactId>
-                    <version>2.2.11</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                    <version>2.2.11</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                    <version>1.1.1</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.codehaus.cargo</groupId>
-                            <artifactId>cargo-maven2-plugin</artifactId>
-                            <configuration>
-                                <container>
-                                    <containerId>tomcat8x</containerId>
-                                    <dependencies>
-                                        <dependency>
-                                            <groupId>javax.xml.bind</groupId>
-                                            <artifactId>jaxb-api</artifactId>
-                                        </dependency>
-                                        <dependency>
-                                            <groupId>com.sun.xml.bind</groupId>
-                                            <artifactId>jaxb-core</artifactId>
-                                        </dependency>
-                                        <dependency>
-                                            <groupId>com.sun.xml.bind</groupId>
-                                            <artifactId>jaxb-impl</artifactId>
-                                        </dependency>
-                                        <dependency>
-                                            <groupId>javax.activation</groupId>
-                                            <artifactId>activation</artifactId>
-                                        </dependency>
-                                    </dependencies>
-                                </container>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-
-        <profile>
-            <id>integration-tests</id>
-
-            <properties>
-                <drivers.dir>${project.basedir}/drivers</drivers.dir>
-                <drivers.downloader.phase>
-                    pre-integration-test
-                </drivers.downloader.phase>
-            </properties>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.cargo</groupId>
-                        <artifactId>cargo-maven2-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>start-portal</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stop-portal</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>com.lazerycode.selenium</groupId>
-                        <artifactId>driver-binary-downloader-maven-plugin
-                        </artifactId>
-                        <version>1.0.17</version>
-                        <configuration>
-                            <onlyGetDriversForHostOperatingSystem>
-                                true
-                            </onlyGetDriversForHostOperatingSystem>
-                            <rootStandaloneServerDirectory>
-                                ${drivers.dir}/driver
-                            </rootStandaloneServerDirectory>
-                            <downloadedZipFileDirectory>
-                                ${drivers.dir}/driver_zips
-                            </downloadedZipFileDirectory>
-                            <customRepositoryMap>
-                                ${project.basedir}/drivers.xml
-                            </customRepositoryMap>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>${drivers.downloader.phase}</phase>
-                                <goals>
-                                    <goal>selenium</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.22.2</version>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
+                                <id>setup-liferay-env</id>
+                                <phase>package</phase>
                                 <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
+                                    <goal>copy-resources</goal>
                                 </goals>
+                                <configuration>
+                                    <outputDirectory>
+                                        ${liferay.home.directory}
+                                    </outputDirectory>
+                                    <propertiesEncoding>ISO-8859-1
+                                    </propertiesEncoding>
+                                    <resources>
+                                        <resource>
+                                            <directory>
+                                                ${project.basedir}/src/main/liferay
+                                            </directory>
+                                            <filtering>true</filtering>
+                                            <includes>
+                                                <include>
+                                                    portal-setup-wizard.properties
+                                                </include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <webdriver.chrome.driver>
-                                    ${webdriver.chrome.driver}
-                                </webdriver.chrome.driver>
-                                <trimStackTrace>false</trimStackTrace>
-                                <enableAssertions>true</enableAssertions>
-                            </systemPropertyVariables>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
