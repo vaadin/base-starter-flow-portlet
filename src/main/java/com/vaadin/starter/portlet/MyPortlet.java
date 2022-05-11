@@ -1,8 +1,15 @@
 package com.vaadin.starter.portlet;
 
-import com.vaadin.flow.portal.VaadinPortlet;
+import javax.portlet.annotations.Dependency;
+import javax.portlet.annotations.PortletConfiguration;
 
-public class MyPortlet extends VaadinPortlet<MyPortletContent> {
+import com.vaadin.flow.portal.VaadinLiferayPortlet;
+
+@PortletConfiguration(
+        portletName = "MyPortlet",
+        dependencies = @Dependency(name = "PortletHub", scope = "javax.portlet", version = "3.0.0")
+)
+public class MyPortlet extends VaadinLiferayPortlet<MyPortletContent> {
 
     @Override
     public String getPortletTag() {
