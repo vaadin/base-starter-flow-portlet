@@ -33,7 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <vaadin.version>23.2.10</vaadin.version>
+        <vaadin.version>23.2.11</vaadin.version>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
@@ -181,9 +181,20 @@
                                     <includes>
                                         <include>**</include>
                                     </includes>
-                                    <!-- do not include configuration files -->
+                                </resource>
+                                <resource>
+                                    <!-- this is relative to the pom.xml directory -->
+                                    <directory>target/classes/META-INF/</directory>
+                                    <!--
+                                        Include all config files to root except flow-build-info
+                                        that is not needed at runtime when running fronted builds
+                                    -->
+                                    <includes>
+                                        <include>VAADIN/config/**</include>
+                                    </includes>
+                                    <!-- do not include  file as it contains portlet configuration -->
                                     <excludes>
-                                        <exclude>VAADIN/config/**</exclude>
+                                        <exclude>VAADIN/config/flow-build-info.json</exclude>
                                     </excludes>
                                 </resource>
                             </webResources>
@@ -197,7 +208,20 @@
                         </goals>
                         <configuration>
                             <primaryArtifact>true</primaryArtifact>
-                            <packagingExcludes>WEB-INF/classes/META-INF/VAADIN/build/**,VAADIN/</packagingExcludes>
+                            <packagingExcludes>WEB-INF/classes/META-INF/VAADIN/webapp/VAADIN/build/**,VAADIN/</packagingExcludes>
+                            <webResources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/resources/</directory>
+                                    <!--
+                                    Include original flow-build-info.json, not the one produced by vaadin plugin
+                                    and included in the static portlet
+                                    -->
+                                    <includes>
+                                        <include>META-INF/VAADIN/config/flow-build-info.json</include>
+                                    </includes>
+                                    <targetPath>WEB-INF/classes/</targetPath>
+                                </resource>
+                            </webResources>
                         </configuration>
                     </execution>
                 </executions>
