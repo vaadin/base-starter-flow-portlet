@@ -5,6 +5,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.portal.VaadinLiferayPortlet;
 import com.vaadin.flow.portal.VaadinPortlet;
+import com.vaadin.mpr.LegacyWrapper;
+import com.vaadin.ui.TextField;
 
 public class MyPortletContent extends VerticalLayout {
 
@@ -15,5 +17,9 @@ public class MyPortletContent extends VerticalLayout {
         Button button = new Button("Click me", event -> Notification.show(
                 "Hello from " + name + " running in " + serverInfo + "!"));
         add(button);
+
+        TextField textField = new TextField("My text field");
+        LegacyWrapper legacyWrapper = new LegacyWrapper(textField);
+        add(legacyWrapper);
     }
 }
