@@ -13,27 +13,14 @@
     <packaging>war</packaging>
 
     <properties>
-        <liferay.version>7.4.3.5-ga5</liferay.version>
-        <tomcat.version>9.0.56</tomcat.version>
-        <liferay.home.directory>
-            ${project.build.directory}/liferay-ce-portal-${liferay.version}
-        </liferay.home.directory>
-        <tomcat.home.directory>
-            ${liferay.home.directory}/tomcat-${tomcat.version}
-        </tomcat.home.directory>
-        <bundle.download.directory>${project.build.directory}
-        </bundle.download.directory>
-        <cargo.debug.port>5005</cargo.debug.port>
-        <cargo.timeout>120000</cargo.timeout>
-
-        <javax.validation.version>2.0.0.Final</javax.validation.version>
-
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <vaadin.version>23.1.0.beta1</vaadin.version>
+        <vaadin.version>24.9.10</vaadin.version>
+        <flow.version>24.9.10</flow.version>
+        <vaadin.productionMode>true</vaadin.productionMode>
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
@@ -41,32 +28,18 @@
     <repositories>
         <repository>
             <id>vaadin-prereleases</id>
-            <url>https://maven.vaadin.com/vaadin-prereleases/</url>
-        </repository>
-        <repository>
-            <id>vaadin-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>vaadin-addons</id>
-            <url>https://maven.vaadin.com/vaadin-addons/</url>
+            <url>https://maven.vaadin.com/vaadin-prereleases</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>vaadin-prereleases</id>
-            <url>https://maven.vaadin.com/vaadin-prereleases/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>vaadin-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <url>https://maven.vaadin.com/vaadin-prereleases</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>
     </pluginRepositories>
 
@@ -85,13 +58,40 @@
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <!-- Replace artifactId with vaadin-core to use only free components -->
             <artifactId>vaadin</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>copilot</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-dev-server</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
+        <!-- Vaadin Portlet Bridge (Jakarta EE 10) -->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-portlet</artifactId>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Jakarta Portlet API 4.0 (provided by Liferay master) -->
+        <dependency>
+            <groupId>com.liferay.jakarta.portlet</groupId>
+            <artifactId>com.liferay.jakarta.portlet-api</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jakarta Servlet API 6.0 (provided by Tomcat 10.1) -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Added to provide logging output as Flow uses -->
@@ -99,30 +99,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.28</version>
-        </dependency>
-
-        <!-- Portlet API -->
-        <dependency>
-            <groupId>javax.portlet</groupId>
-            <artifactId>portlet-api</artifactId>
-            <version>3.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Servlet API -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Test dependencies -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench</artifactId>
-            <scope>test</scope>
+            <version>2.0.17</version>
         </dependency>
     </dependencies>
 
@@ -132,12 +109,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.11.0</version>
             </plugin>
+
+            <!-- Vaadin frontend build (always production mode) -->
             <plugin>
                 <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-maven-plugin</artifactId>
-                <version>${vaadin.version}</version>
+                <artifactId>flow-maven-plugin</artifactId>
+                <version>${flow.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -148,40 +127,39 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- WAR packaging: portlet WAR + static resources WAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.3</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Implementation-Title>${project.name}</Implementation-Title>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-                <!-- Generate 2 war archives for portlet. One for the portlet and another for the static files -->
+                <version>3.3.2</version>
                 <executions>
-                    <!-- Generate a static war 'vaadin-portlet-static.war' with all static files -->
+                    <!-- Main portlet WAR (excludes frontend bundles) -->
+                    <execution>
+                        <id>portlet-war</id>
+                        <goals><goal>war</goal></goals>
+                        <configuration>
+                            <primaryArtifact>true</primaryArtifact>
+                            <packagingExcludes>
+                                WEB-INF/classes/META-INF/VAADIN/build/**,VAADIN/
+                            </packagingExcludes>
+                        </configuration>
+                    </execution>
+                    <!-- Static resources WAR (frontend bundles only) -->
                     <execution>
                         <id>static-files</id>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
+                        <goals><goal>war</goal></goals>
                         <configuration>
                             <warName>vaadin-portlet-static</warName>
-                            <!-- static files should contain flow-client and all build files generated in VAADIN/ -->
-                            <packagingIncludes>WEB-INF/lib/flow-client*.jar,WEB-INF/lib/vaadin-portlet*.jar,VAADIN/</packagingIncludes>
-
+                            <packagingIncludes>
+                                WEB-INF/lib/flow-client*.jar,WEB-INF/lib/vaadin-portlet*.jar,VAADIN/
+                            </packagingIncludes>
                             <webResources>
                                 <resource>
-                                    <!-- this is relative to the pom.xml directory -->
                                     <directory>target/classes/META-INF/VAADIN/webapp/</directory>
-                                    <!-- Include all files and folders below <directory> -->
                                     <includes>
                                         <include>**</include>
                                     </includes>
-                                    <!-- do not include configuration files -->
                                     <excludes>
                                         <exclude>VAADIN/config/**</exclude>
                                     </excludes>
@@ -189,191 +167,9 @@
                             </webResources>
                         </configuration>
                     </execution>
-                    <!-- Generate the portlet war excluding any static build files -->
-                    <execution>
-                        <id>portlet-war</id>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                        <configuration>
-                            <primaryArtifact>true</primaryArtifact>
-                            <packagingExcludes>WEB-INF/classes/META-INF/VAADIN/build/**,VAADIN/</packagingExcludes>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven3-plugin</artifactId>
-                <version>1.9.10</version>
-                <configuration>
-                    <container>
-                        <containerId>tomcat9x</containerId>
-                        <home>${tomcat.home.directory}</home>
-                        <timeout>${cargo.timeout}</timeout>
-                    </container>
-                    <configuration>
-                        <type>existing</type>
-                        <home>${tomcat.home.directory}</home>
-                        <properties>
-                            <cargo.start.jvmargs>
-                                -Xdebug
-                                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${cargo.debug.port}
-                                -Xnoagent
-                                -Dfile.encoding=UTF-8
-                                -Djava.locale.providers=JRE,COMPAT,CLDR
-                                -Djava.net.preferIPv4Stack=true
-                                -Duser.timezone=GMT
-                                -Xms2560m
-                                -Xmx2560m
-                                -XX:MaxNewSize=1536m
-                                -XX:MaxMetaspaceSize=768m
-                                -XX:MetaspaceSize=768m
-                                -XX:NewSize=1536m
-                                -XX:SurvivorRatio=7
-                                -Djava.compiler=NONE
-                                -Dvaadin.heartbeatInterval=15
-                                -Dvaadin.portlet.static.resources.mapping=/o/vaadin-portlet-static/
-                            </cargo.start.jvmargs>
-                        </properties>
-                    </configuration>
-
-                    <!-- Set an empty deployer so that cargo does not try to add the
-                    current project's artifact to the container (as this was already
-                    done by maven) -->
-                    <deployer/>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>production</id>
-
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>flow-server-production-mode</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>demo</id>
-
-            <build>
-                <plugins>
-                    <!-- setup Liferay and copy portlet -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <executions>
-                            <execution>
-                                <id>download-files</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target name="setup-liferay">
-                                        <get src="https://github.com/liferay/liferay-portal/releases/download/${liferay.version}/liferay-ce-portal-tomcat-${liferay.version}-20211221192828235.tar.gz"
-                                             dest="${bundle.download.directory}/liferay.tar.gz"
-                                             verbose="false"
-                                             usetimestamp="true"/>
-                                        <untar src="${bundle.download.directory}/liferay.tar.gz"
-                                               compression="gzip"
-                                               dest="${project.build.directory}"/>
-                                        <copy file="${project.build.directory}/${project.artifactId}.war"
-                                              todir="${liferay.home.directory}/osgi/war"/>
-                                        <copy file="${project.build.directory}/vaadin-portlet-static.war"
-                                              todir="${liferay.home.directory}/osgi/war"/>
-                                        <copy file="${project.basedir}/src/main/liferay/jna-5.11.0.jar"
-                                              todir="${tomcat.home.directory}/webapps/ROOT/WEB-INF/shielded-container-lib/"/>
-                                        <copy file="${project.basedir}/src/main/liferay/jna-platform-5.11.0.jar"
-                                              todir="${tomcat.home.directory}/webapps/ROOT/WEB-INF/shielded-container-lib/"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
-                        <executions>
-                            <execution>
-                                <id>setup-liferay-env</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>
-                                        ${liferay.home.directory}
-                                    </outputDirectory>
-                                    <propertiesEncoding>ISO-8859-1
-                                    </propertiesEncoding>
-                                    <resources>
-                                        <resource>
-                                            <directory>
-                                                ${project.basedir}/src/main/liferay
-                                            </directory>
-                                            <filtering>true</filtering>
-                                            <includes>
-                                                <include>
-                                                    portal-setup-wizard.properties
-                                                </include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>servlet</id>
-            <dependencies>
-
-                <dependency>
-                    <groupId>javax.portlet</groupId>
-                    <artifactId>portlet-api</artifactId>
-                    <version>2.0</version>
-                </dependency>
-            </dependencies>
-            <build>
-
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.0</version>
-                    </plugin>
-                    <!-- Jetty plugin for easy testing without a server -->
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>9.4.19.v20190610</version>
-                        <configuration>
-                            <!-- If using IntelliJ IDEA with autocompilation, this
-                            might cause lots of unnecessary compilations in the
-                            background.-->
-                            <scanIntervalSeconds>2</scanIntervalSeconds>
-                            <!-- Use war output directory to get the webpack files -->
-                            <webAppConfig>
-                                <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-                            </webAppConfig>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

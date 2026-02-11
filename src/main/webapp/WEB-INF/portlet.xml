@@ -5,17 +5,17 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/portlet http://xmlns.jcp.org/xml/ns/portlet/portlet-app_3_0.xsd"
              version="3.0">
     <portlet>
-        <portlet-name>MyPortlet1</portlet-name>
-        <display-name>My Test Portlet</display-name>
+        <portlet-name>MyPortlet</portlet-name>
+        <display-name>My Vaadin Portlet</display-name>
         <portlet-class>com.vaadin.starter.portlet.MyPortlet</portlet-class>
+        <expiration-cache>0</expiration-cache>
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
         </supports>
         <portlet-info>
-            <title>My Test Portlet - MyPortlet1</title>
-            <short-title>My Test Portlet</short-title>
-            <keywords></keywords>
+            <title>My Vaadin Portlet</title>
+            <short-title>My Portlet</short-title>
         </portlet-info>
         <security-role-ref>
             <role-name>administrator</role-name>
@@ -30,12 +30,12 @@
             <role-name>user</role-name>
         </security-role-ref>
         <container-runtime-option>
-            <name>javax.portlet.renderHeaders</name>
+            <name>jakarta.portlet.renderHeaders</name>
             <value>true</value>
         </container-runtime-option>
         <dependency>
             <name>PortletHub</name>
-            <scope>javax.portlet</scope>
+            <scope>jakarta.portlet</scope>
             <version>3.0.0</version>
         </dependency>
     </portlet>
