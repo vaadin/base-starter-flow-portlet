@@ -32,6 +32,11 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
+        <repository>
+            <id>liferay-public</id>
+            <name>Liferay Public</name>
+            <url>https://repository.liferay.com/nexus/content/repositories/public/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
